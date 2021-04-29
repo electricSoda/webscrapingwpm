@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lul Typing XD</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+      #text {font-size: 30px}
+    </style>
+  </head>
+  <body>
+    <p id='text'></p>
+    <p id='timer'>0:30</p>
+    <input type='text' id='typing'>
+    <a id='result'></a>
+  </body>
+
+  <script>
+    var text = document.getElementById('text')
+    var result = document.getElementById('result')
+    var typing = document.getElementById('typing')
+    var timer = document.getElementById('timer')
+
+    var words;
+    var correct = 0;
+    var incorrect = 0;
+
+    //starting word (words courtesy of RazorSh4rk on github)
+    fetch('https://raw.githubusercontent.com/RazorSh4rk/random-word-api/master/words.json')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        words = data
+      }).then(() => {
+        text.innerHTML = words[Math.floor(Math.random() * words.length + 1) + 0]
+      })
+
+    let iftyping = false;
+    let time = 30;
+
+    function setzeinterval() {
+      var timerinternal = setInterval(function () {
+        if (time == 0) {
+          alert('Times up')
+          var wpm_raw = (correct+incorrect)*2
+          var wpm = wpm_raw - (incorrect *0.5)
+          document.body.innerHTML = `YOU FINISHED YAY LUL SO FONNYYYY WEEEEEEE <p>lul you got ${correct} words correct</p> <p>oof you got ${incorrect} words wrong</p> <p>Your RAW Word Per Minute was ${wpm_raw}</p> <p>Your adjusted Word Per Minute Was (counting incorrect words): ${wpm}</p>`;
+          clearInterval(timerinternal);
+        }
+        time -= 1;
+        if(time<10) {
+          timer.innerHTML = "0:0"+time;
+        } else {
+          timer.innerHTML = "0:"+time;
+        }
+      }, 1000)
+    }
+
+    $("#typing").on("change keyup", function(){
+      if (!iftyping) {
+        iftyping = true;
+        setzeinterval();
+      }
+    })
+
+    document.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+          if (iftyping==false) {
+            iftyping = true;
+            text.innerHTML = words[Math.floor(Math.random() * words.length + 1) + 0]
+            typing.value = '';
+          } else {
+            if (typing.value == text.innerHTML) {
+              correct += 1;
+            } else {
+              incorrect += 1;
+            }
+            text.innerHTML = words[Math.floor(Math.random() * words.length + 1) + 0]
+            typing.value = '';
+          }
+        }
+    });
+  </script>
+</html>
